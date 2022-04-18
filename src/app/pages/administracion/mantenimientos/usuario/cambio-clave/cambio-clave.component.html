@@ -1,0 +1,61 @@
+<div class="cambio_clave">
+  <h2>Cambiar Contraseña</h2>
+  <form [formGroup]="forma" class="material-form form-validate">
+    <div class="example-container">
+      <mat-form-field>
+        <input
+          required
+          [type]="'password'"
+          id="password"
+          name="password"
+          matInput
+          formControlName="password"
+          placeholder="Contraseña actual"
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          required
+          [type]="'password'"
+          id="newPassword"
+          name="newPassword"
+          matInput
+          formControlName="newPassword"
+          placeholder="Nueva contraseña"
+        />
+        <mat-error *ngIf="forma.get('newPassword').invalid">
+          <p>Minimo 8 caracteres.</p>
+          <p>Contraseña insegura</p>
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          required
+          [type]="'password'"
+          id="newRePassword"
+          name="newRePassword"
+          (keyup)="onInput($event.target.value)"
+          matInput
+          formControlName="newRePassword"
+          placeholder="Confirmar contraseña"
+        />
+        <mat-error *ngIf="forma.get('newRePassword').invalid">
+          Las contraseña no coinciden
+        </mat-error>
+      </mat-form-field>
+      <div class="dialog_buttons">
+        <button
+          type="submit"
+          (click)="enviar()"
+          id="submit"
+          [disabled]="!forma.valid"
+          mat-raised-button
+          color="btnCeleste"
+        >
+          Guardar
+        </button>
+        <button id="cancel" (click)="btnCerrar()" mat-raised-button color="btnGris">Cancelar</button>
+      </div>
+    </div>
+  </form>
+</div>

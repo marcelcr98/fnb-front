@@ -1,0 +1,193 @@
+<form [formGroup]="forma">
+  <mat-card class="calidda-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>
+          {{ estadoFinanciamiento }} Financiamiento :
+          <strong
+            ><b>{{ financiamiento.nroPedidoVenta }}</b></strong
+          >
+        </h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="card-content" style="margin-top: 15px">
+      <section class="form_material">
+        <div class="form_inputs middle_align">
+          <div>
+            <mat-form-field>
+              <mat-select
+                placeholder="Modalidad de Entrega"
+                formControlName="tipoDespacho"
+                name="tipoDespacho"
+                matInput
+              >
+                <mat-option *ngFor="let venta of listas.tipoVenta" [value]="venta.value">
+                  {{ venta.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                matInput
+                readonly
+                matInput
+                [matDatepicker]="pickers"
+                placeholder="Fecha de venta"
+                formControlName="fechaVenta"
+              />
+              <mat-datepicker-toggle matSuffix [for]="pickers" disabled></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="correoElectronico" placeholder="Correo Electrónico" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="nroCuota" placeholder="N° Cuotas">
+                <mat-option value="NB03">03 CUOTAS</mat-option>
+                <mat-option value="NB06">06 CUOTAS</mat-option>
+                <mat-option value="NB09">09 CUOTAS</mat-option>
+                <mat-option value="NB12">12 CUOTAS</mat-option>
+                <mat-option value="NB18">18 CUOTAS</mat-option>
+                <mat-option value="NB24">24 CUOTAS</mat-option>
+                <mat-option value="NB36">36 CUOTAS</mat-option>
+                <mat-option value="NB48">48 CUOTAS</mat-option>
+                <mat-option value="NB60">60 CUOTAS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field *ngIf="ngFechaEntregaPerm">
+              <input
+                matInput
+                readonly
+                [matDatepicker]="pickers"
+                placeholder="Fecha de entrega"
+                [min]="forma.get('fechaVenta').value"
+                [max]="fechaActual"
+                formControlName="fechaEntrega"
+              />
+              <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput formControlName="nroBoleta" placeholder="N° Boleta" name="nroBoleta" />
+            </mat-form-field>
+
+            <mat-form-field id="tipoTelefono">
+              <mat-select matInput formControlName="tipoTelefono" placeholder="Tipo de teléfono">
+                <mat-option value="T001"> Fijo </mat-option>
+                <mat-option value="T002"> Celular </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div
+              id="prefijonro"
+              class="{{ visibilidad }} mat-form-field"
+              style="padding-left: 7px; padding-right: 7px; padding-bottom: 5px; width: 39px; border-bottom: 1px solid rgba(0,0,0,.42);"
+            >
+              01 -
+            </div>
+
+            <mat-form-field id="nroTelefono" style="width: 58%">
+              <input
+                matInput
+                formControlName="numeroTelefono"
+                placeholder="Número de telefono"
+                maxlength="{{ lenghtValidacion }}"
+                minlength="{{ lenghtValidacion }}"
+              />
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field id="canal">
+              <mat-select formControlName="canalVentaId" placeholder="Canal" matInput>
+                <mat-option *ngFor="let canal of listas.canales" [value]="canal.value">
+                  {{ canal.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                id="idLectura"
+                placeholder="Vendedor"
+                matInput
+                readonly
+                value="{{ NombreCompleto }}"
+                formControlName="vendedorS"
+              />
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput formControlName="montoCuota" readonly placeholder="Monto de cuota" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="other_buttons" style="padding-top: 45px;">
+          <div class="buttons_">
+            <div>
+              <div class="buttons_actions">
+                <mat-form-field *ngIf="financiamiento.sedeId === 0" id="sede">
+                  <mat-select formControlName="sedeId" placeholder="Sede" matInput>
+                    <mat-option *ngFor="let sede of listas.sedes" [value]="sede.value">
+                      {{ sede.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="form_material">
+        <mat-card-header>
+          <mat-card-title>
+            <h2>Combos y Productos</h2>
+          </mat-card-title>
+        </mat-card-header>
+        <app-financiamiento-productos
+          [forma]="forma"
+          [hayExceso]="hayExceso"
+          [totalMonto]="totalMonto"
+          [detalle]="financiamiento.detalle"
+          [lineaCredito]="lineaCredito"
+        ></app-financiamiento-productos>
+      </section>
+      <section class="form_material" *ngIf="financiamiento.tipoDespacho != 1">
+        <mat-card-header>
+          <mat-card-title>
+            <h2>Modalidad de Entrega</h2>
+          </mat-card-title>
+        </mat-card-header>
+        <app-financiamiento-despacho-edit
+          [forma]="forma"
+          [idAliado]="financiamiento.detalle[0].data.id"
+          [departamentos]="listas.departamentos"
+          [tipoDespacho]="financiamiento.tipoDespacho"
+          [despacho]="financiamiento.despacho"
+        ></app-financiamiento-despacho-edit>
+      </section>
+    </mat-card-content>
+  </mat-card>
+  <div class="form_footer">
+    <div class="form_buttons">
+      <div class="buttons_actions">
+        <button
+          *ngIf="ngGuardarFinanciamiento && _financiamientoEdicionService.state !== 'read'"
+          type="submit"
+          [disabled]="!forma.valid"
+          mat-raised-button
+          color="btnCeleste"
+          (click)="submit()"
+        >
+          <mat-icon>save</mat-icon> Guardar
+        </button>
+        <button (click)="_financiamientoEdicionService.cancelar()" mat-raised-button color="btnGris">
+          <mat-icon>block</mat-icon> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,139 @@
+
+<mat-card class="calidda-card">
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Usuarios</h2>
+      
+
+      <mat-menu #menu="matMenu" xPosition="before"> </mat-menu>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <form [formGroup]="usuarioGroup">
+      <section class="form_material">
+        <div class="form_inputs">
+          <div>
+            <mat-form-field>
+              <mat-select
+                (selectionChange)="change($event, dt)"
+                [disabled]="aliadoComercialId"
+                matInput
+                id="aliadoComercial"
+                formControlName="idAliado"
+                name="aliadoComercial"
+                [value]="aliadoComercialId"
+                placeholder="Aliado Comercial"
+             
+    
+              >
+                <mat-option>TODOS</mat-option>
+                <mat-option *ngFor="let alidoActual of aliados" [value]="alidoActual.value">
+                  {{ alidoActual.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <input
+                #userName
+                [type]="'text'"
+                id="usuario"
+                formControlName="idUsuario"
+                name="userName"
+                (change)="dt.filter($event.srcElement.value, 'usuario', 'contains')"
+                matInput
+                placeholder="Usuario"
+                maxlength="50"
+
+               
+              />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select
+                [value]="estado"
+                (selectionChange)="dt.filter($event.value, 'estado', 'equals')"
+                matInput
+                id="estado"
+                formControlName="idEstado"
+                name="estado"
+                placeholder="Estado"
+
+             
+        
+              >
+                <mat-option>TODOS</mat-option>
+                <mat-option [value]="1">ACTIVOS</mat-option>
+                <mat-option [value]="0">INACTIVOS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field>
+              <mat-select
+                [disabled]="sedeId"
+                [value]="sedeId"
+                (selectionChange)="dt.filter($event.value, 'sedeId', 'equals')"
+                matInput
+                id="sede"
+                formControlName="idSede"
+                name="sede"
+                placeholder="Sede"
+           
+     
+              >
+                <mat-option>TODOS</mat-option>
+                <mat-option *ngFor="let sede of sedes" [value]="sede.value">
+                  {{ sede.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select
+                placeholder="Rol"
+                [disabled]="rolId"
+                [value]="rolId"
+                (selectionChange)="dt.filter($event.value, 'rolId', 'equals')"
+                name="rol"
+                matInput
+              >
+                <mat-option>TODOS</mat-option>
+                <mat-option *ngFor="let rol of roles" [value]="rol.value">
+                  {{ rol.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button color="btnCeleste" id="exportar" (click)="exportar()">
+              <i class="fas fa-file-excel"></i> Exportar Usuarios
+            </button>
+
+
+          </div>
+        </div>
+      </section>
+    </form>
+  </mat-card-content>
+</mat-card>
+<mat-card class="calidda-card">
+  <mat-card-content class="card-content">
+    <div class="other_buttons">
+      <div class="buttons_">
+        <div class="right">
+          <a *ngIf="this._global.validarPermiso('AGRUSU')" [routerLink]="['/usuario']">
+            <button mat-raised-button color="btnCeleste">
+              <em class="material-icons-outlined"> add_circle_outline </em> Nuevo
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="content_material">
+      <app-paging-grid
+        #dt
+        [dataEntity]="dataEntity"
+        (paginationLoad)="loadLazy($event)"
+        (updateState)="updateState($event)"
+      ></app-paging-grid>
+    </div>
+  </mat-card-content>
+</mat-card>
+

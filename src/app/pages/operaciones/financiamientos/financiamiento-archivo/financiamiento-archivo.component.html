@@ -1,0 +1,41 @@
+<div class="cambio_clave">
+  <h2 mat-dialog-title>
+    Adjuntar Archivo <br />N° Pedido:<strong>{{ data.nroPedido }}</strong>
+  </h2>
+  <mat-dialog-content class="mat-typography">
+    <form [formGroup]="forma" class="material-form form-validate">
+      <div class="modalidadEntregaDialog">
+        <mat-card class="calidda-card">
+          <mat-form-field>
+            <input matInput formControlName="descripcion" placeholder="Descripción" />
+          </mat-form-field>
+          <div class="file_input" (click)="fileInput.click()">
+            <button id="update" mat-raised-button color="btnCeleste_l">
+              <i class="fas fa-upload"></i> Seleccionar Archivo
+            </button>
+            <input
+              #fileInput
+              type="file"
+              style="display: none"
+              formControlName="imagePath"
+              accept={{allowedExtensions}}
+              (change)="loadArchivo($event)"
+            />
+          </div>
+          <div class="file_input">
+            <p id="archivo" class="fnb_italic">Ningún archivo seleccionado</p>
+          </div>
+        </mat-card>
+      </div>
+    </form>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button (click)="modalReference.close()" mat-raised-button color="btnGris">Cancelar</button>
+    <button mat-button mat-raised-button color="btnCeleste" (click)="send()" [disabled]="!forma.valid" cdkFocusInitial>
+      Grabar
+    </button>
+  </mat-dialog-actions>
+</div>
+<div class="content_material">
+  <app-paging-grid #dt [dataEntity]="dataEntity" (paginationLoad)="loadLazy($event)"></app-paging-grid>
+</div>

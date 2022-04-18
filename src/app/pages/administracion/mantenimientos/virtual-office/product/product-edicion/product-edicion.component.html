@@ -1,0 +1,379 @@
+<mat-card class="calidda-card">
+  <mat-card-header>
+    <mat-card-title>
+      <h2>Producto</h2>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <section class="form_material">
+      <mat-tab-group>
+        <mat-tab label="Producto">
+          <form [formGroup]="ProductRegisterForm">
+            <section class="form_material my-4">
+              <div class="form_inputs">
+                <div class="my-0">
+                  <mat-form-field>
+                    <input
+                      type="text"
+                      matInput
+                      placeholder="Nombre"
+                      formControlName="name"
+                      letterNumberSign
+                      maxlength="100"
+                      required
+                    />
+                    <mat-error *ngIf="nameValidate">El campo nombre no puede estar vacío.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  <mat-form-field>
+                    <input min="1" matInput type="number" formControlName="monthFee" placeholder="Cuota mes" required />
+                    <mat-error *ngIf="monthfeeValidate">El campo cuota no puede estar vacío.</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="form_inputs">
+                <div class="my-0">
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="text"
+                      placeholder="Aliado Comercial"
+                      formControlName="commercialAlly"
+                      [matAutocomplete]="auto"
+                      required
+                    />
+                    <mat-autocomplete
+                      #auto="matAutocomplete"
+                      [displayWith]="displayFn"
+                      (optionSelected)="setCommercialAllyId()"
+                    >
+                      <mat-option *ngFor="let commercialAlly of filteredCommercialAllyList | async" [value]="commercialAlly">
+                        {{ commercialAlly.businessName }}
+                      </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="comercialAllyValidate">Debe ingresar Aliado Comercial.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  <mat-form-field>
+                    <input
+                      min="1"
+                      type="number"
+                      matInput
+                      placeholder="Precio Regular"
+                      formControlName="regularPrice"
+                      NumberSign
+                    />
+                    <mat-error *ngIf="regularPriceValidate">El campo precio regular no puede estar vacío.</mat-error>
+                  </mat-form-field>
+                </div>                
+              </div>
+              <div class="form_inputs">
+                <div class="my-0">
+                  <mat-form-field>
+                    <input                      
+                      type="text"
+                      OnlyInteger
+                      matInput
+                      formControlName="sapCode"
+                      placeholder="SKU"
+                      maxlength="100"
+                      required
+                    />
+                    <mat-error *ngIf="sapCodeValidate">Debe ingresar un código Sku.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  <mat-form-field>
+                    <mat-select placeholder="Categoría" formControlName="categoryFnbId"
+                    (selectionChange)="ChangeCategoryFnb($event)"
+                    required>
+                      <mat-option *ngFor="let item of CategoryFnbList" [value]="item.id">
+                        {{ item.name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="categoryFnbValidate">Debe seleccionar una categoría.</mat-error>
+                  </mat-form-field>
+                </div>
+                
+              </div>
+              <div class="form_inputs">
+                <div class="my-0">
+                  <mat-form-field>
+                    <mat-select
+                      placeholder="SubCategoría"
+                      formControlName="subCategoryId"
+                      (selectionChange)="ChangeSubCategory($event)"
+                      matNativeControl
+                      required
+                    >
+                      <mat-option *ngFor="let item of SubCategoryList" [value]="item.subCategoryId">
+                        {{ item.description }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="subcategoryValidate">Debe seleccionar una subcategoría.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  <mat-form-field>
+                    <mat-select
+                      placeholder="Marca"
+                      formControlName="brandId"
+                      (selectionChange)="ChangeBrand($event)"
+                      matNativeControl
+                    >
+                      <mat-option *ngFor="let item of BrandList" [value]="item.brandId">
+                        {{ item.description }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="brandValidate">Debe seleccionar una marca.</mat-error>
+                  </mat-form-field>
+                </div>                
+              </div>
+              <div class="form_inputs mb-4">
+                <div class="my-0">
+                  <mat-form-field>
+                    <mat-select
+                      formControlName="sectionId"
+                      placeholder="Sección"
+                      (selectionChange)="ChangeSection($event)"
+                      matNativeControl
+                      required
+                    >
+                      <mat-option *ngFor="let item of SectionList" [value]="item.sectionId">
+                        {{ item.description }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="sectionValidate">Debe seleccionar una sección.</mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  <mat-form-field>
+                    <input
+                      min="1"
+                      matInput
+                      type="number"
+                      formControlName="discountOFV"
+                      placeholder="DescuentosOFV"
+                      required
+                    />
+                    <mat-error *ngIf="discountValidate">Debe ingresar el descuento.</mat-error>
+                  </mat-form-field>
+                </div>               
+              </div>
+              <div class="form_inputs">
+                <div class="my-0">
+                  <mat-form-field>
+                    <input type="text" 
+                      onlyNumber                   
+                      matInput
+                      minlength="1"
+                      maxlength="1"
+                      pattern="^[1-5]+"                    
+                      formControlName="annualInstallments"
+                      placeholder="Plazo de años cuota"    
+                      required                 
+                    /> 
+                    <mat-error><p *ngIf="ProductRegisterForm.get('annualInstallments').hasError('required')">Debe ingresar el plazo.</p></mat-error>                          
+                    <mat-error><p *ngIf="ProductRegisterForm.get('annualInstallments').hasError('pattern')">Debe ingresar plazo de 1-5 años de rango.</p></mat-error>
+                  </mat-form-field>
+                </div>
+                <div class="my-0">
+                  
+                            <mat-form-field appearance="outline">
+                                <mat-label>Orden</mat-label>
+                                <input min="0" type="number"  pattern="^[0-9]+$" placeholder="Orden" formControlName="order" matInput required/>
+                                <mat-error *ngIf="ordenValidate">El campo orden solo debe ser numero entero.</mat-error>
+                            </mat-form-field>
+                      
+                </div>                
+              </div>
+              <div class="form_inputs">
+                <div class="my-0">
+                  <div class="p-2 flex-md-fill bd-highlight">
+                    Nuevo <input formControlName="nnew" type="checkbox" />
+                  </div>
+                  <div class="p-2 flex-md-fill bd-highlight">
+                    Oferta <input formControlName="offer" type="checkbox" />
+                  </div>
+                  <div class="p-2 flex-md-fill bd-highlight">
+                    Habilitado <input formControlName="state" type="checkbox" class="ml-2" />
+                  </div>
+                </div>
+                <div>&nbsp;</div>
+              </div>
+            </section>
+          </form>
+        </mat-tab>
+
+        <mat-tab [disabled]="ProductRegisterForm.invalid" label="Características">
+          <form [formGroup]="FeautureForm">
+            <section class="form_material my-4">
+              <div class="form_inputs">
+                <div>
+                  <mat-form-field>
+                    <mat-placeholder>Características</mat-placeholder>
+                    <input maxlength="900" matInput formControlName="description" required />
+                  </mat-form-field>
+                </div>
+                <div>
+                  <button (click)="addFeautureArray()" mat-button matSuffix mat-stroked-button aria-label="add" color="btnCeleste">
+                    <em class="material-icons-outlined"> add_circle_outline </em>Agregar
+                  </button>
+                </div>
+              </div>
+
+              <div class="m-5">
+                <table mat-table [dataSource]="FeatureDataSource" class="ewTable">
+                  <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                    <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="eliminar">
+                    <th mat-header-cell *matHeaderCellDef>Eliminar</th>
+                    <td mat-cell *matCellDef="let element; index as i">
+                      <button (click)="FeatureRemove(i)" mat-icon-button color="btnIconBlue">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+              </div>
+            </section>
+          </form>
+        </mat-tab>
+
+        <mat-tab [disabled]="FeatureArray.length == 0" label="Cuotas">
+          <div class="container">
+            <div class="form_inputs">
+              <div>
+                <mat-checkbox (change)="checkAll($event)" class="col-md-12 text-right" color="primary"
+                  >Seleccionar Todo
+                </mat-checkbox>
+                <mat-checkbox
+                  *ngFor="let x of FeeList"
+                  value="{{ x.description }}"
+                  (change)="EnabledCheck($event)"
+                  [checked]="x.state == true"
+                  class="col-md-3"
+                  color="primary"
+                >
+                  {{ x.description }}</mat-checkbox
+                >
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <mat-tab [disabled]="ProductFeeList.length == 0" label="Imágenes">
+          <section class="form_material my-4">
+            <div class="form_inputs">
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Imagen de la categoría</mat-label>
+                  <ngx-mat-file-input accept="image/*" (change)="onFileChange($event)" type="file">
+                  </ngx-mat-file-input>
+                </mat-form-field>
+              </div>
+              <div></div>
+            </div>
+
+            <div class="form_inputs">
+              <div>
+                <mat-list role="list">
+                  <mat-list-item role="listitem" *ngFor="let item of ProductImages; let i = index" class="mt-4 mb-5">
+                    <mat-radio-button
+                      color="primary"
+                      [checked]="item.state"
+                      [value]="i"
+                      (change)="ActiveImage((selection = $event.value))"
+                    >
+                      {{ i + 1 }}. <img height="75px" width="75px" [src]="item.routeImage" />
+                    </mat-radio-button>
+                    <button (click)="ImageRemove(i)" mat-icon-button>
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-list-item>
+                </mat-list>
+              </div>
+            </div>
+          </section>         
+        </mat-tab>
+
+        <mat-tab *ngIf="mostrarTabServicios" [disabled]="ProductRegisterForm.invalid" label="Servicios">
+          <form [formGroup]="ServiceForm">
+            <section class="form_material my-4">
+              <div class="form_inputs">
+                <div>
+                  <mat-form-field appearance="outline" class="example-full-width">
+                    <mat-label>Busqueda servicios...</mat-label>
+                    <input matInput aria-label="State" [matAutocomplete]="auto" [formControl]="stateCtrl" />
+                    <mat-autocomplete #auto="matAutocomplete">
+                      <mat-option *ngFor="let state of filteredStates | async" [value]="state.name">
+                        <span>{{ state.name }}</span> |
+                        <small>Código: {{ state.sapCode }}</small>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </div>
+                <div class="m-auto mr-md-auto">
+                  <button (click)="addServiceArray()" mat-raised-button class="btn-ico mb-3" color="btnCeleste">
+                    <em class="material-icons-outlined"> add_circle_outline </em>
+                    Agregar
+                  </button>
+                </div>
+              </div>
+
+              <div class="m-5">
+                <table mat-table [dataSource]="ServiceDataSource" class="ewTable">
+                  <!--<ng-container matColumnDef="descripcion">
+                              <th mat-header-cell *matHeaderCellDef> Descripción </th>
+                              <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+                          </ng-container>-->
+                  <ng-container matColumnDef="descripcion">
+                    <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                    <td mat-cell *matCellDef="let cartItem">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p class="content-service">Nombre: {{ cartItem.name }}</p>
+                          <p class="content-service">Cuota Mes: {{ cartItem.monthFee }}</p>
+                          <p class="content-service">Precio Regular: {{ cartItem.regularPrice }}</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p class="content-service">Código SAP: {{ cartItem.sapCode }}</p>
+                          <p class="content-service">Descuento OFV: {{ cartItem.discountOfv }}</p>
+                          <p class="content-service">Marca: {{ cartItem.brandName }}</p>
+                        </div>
+                      </div>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="eliminar">
+                    <th mat-header-cell *matHeaderCellDef>Eliminar</th>
+                    <td mat-cell *matCellDef="let element; index as i">
+                      <button (click)="ServiceRemove(i)" mat-icon-button color="btnIconBlue">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns" hidden></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+              </div>
+            </section>
+          </form>
+        </mat-tab>
+      </mat-tab-group>
+      <div class="form_buttons">
+        <div class="buttons_actions">
+          <button type="submit" (click)="save()" id="submit" mat-raised-button color="btnCeleste">
+            <mat-icon>save</mat-icon> Guardar
+          </button>
+          <button (click)="cancel()" mat-raised-button color="btnGris"><mat-icon>block</mat-icon> Cancelar</button>
+        </div>
+      </div>
+    </section>
+  </mat-card-content>
+</mat-card>

@@ -1,0 +1,203 @@
+<form [formGroup]="forma">
+  <mat-card class="calidda-card">
+    <mat-card-header>
+      <mat-card-title>
+        <h2>Registro de Financiamiento</h2>
+      </mat-card-title>
+      <div class="addButton" style="float:right">
+        <button type="button" (click)="simularCuotas()" mat-raised-button color="btnCeleste">
+          <em class="material-icons-outlined">add_circle_outline</em>Simular Cuotas
+        </button>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="card-content" style="margin-top: 15px">
+      <section class="form_material">
+        <div class="form_inputs middle_align">
+          <div>
+            <mat-form-field>
+              <input
+                matInput
+                readonly
+                matInput
+                [matDatepicker]="pickers"
+                placeholder="Fecha de venta"
+                formControlName="fechaVenta"
+              />
+              <mat-datepicker-toggle matSuffix [for]="pickers" disabled></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+              <input matInput formControlName="correoElectronico" placeholder="Correo Electrónico" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-select formControlName="nroCuota" placeholder="N° Cuotas">
+                <mat-option value="NB03">03 CUOTAS</mat-option>
+                <mat-option value="NB06">06 CUOTAS</mat-option>
+                <mat-option value="NB09">09 CUOTAS</mat-option>
+                <mat-option value="NB12">12 CUOTAS</mat-option>
+                <mat-option value="NB18">18 CUOTAS</mat-option>
+                <mat-option value="NB24">24 CUOTAS</mat-option>
+                <mat-option value="NB36">36 CUOTAS</mat-option>
+                <mat-option value="NB48">48 CUOTAS</mat-option>
+                <mat-option value="NB60">60 CUOTAS</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field *ngIf="ngFechaEntregaPerm">
+              <input
+                matInput
+                readonly
+                [matDatepicker]="pickers"
+                placeholder="Fecha de entrega"
+                [min]="forma.get('fechaVenta').value"
+                [max]="fechaActual"
+                formControlName="fechaEntrega"
+              />
+              <mat-datepicker-toggle matSuffix [for]="pickers"></mat-datepicker-toggle>
+              <mat-datepicker #pickers></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field id="tipoTelefono">
+              <mat-select
+                (selectionChange)="changeTipoTel($event.value)"
+                matInput
+                formControlName="tipoTelefono"
+                placeholder="Tipo de teléfono"
+              >
+                <mat-option value="T001"> Fijo </mat-option>
+                <mat-option value="T002"> Celular </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div
+              id="prefijonro"
+              class="{{ visibilidad }} mat-form-field"
+              style="padding-left: 7px; padding-right: 7px; padding-bottom: 5px; width: 39px; border-bottom: 1px solid rgba(0,0,0,.42);"
+            >
+              01 -
+            </div>
+
+            <mat-form-field id="nroTelefono" style="width: 58%">
+              <input
+                matInput
+                formControlName="numeroTelefono"
+                placeholder="Número de teléfono"
+                maxlength="{{ lenghtValidacion }}"
+                minlength="{{ lenghtValidacion }}"
+              />
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field id="canal">
+              <mat-select
+                (selectionChange)="canalChange($event)"
+                formControlName="canalVentaId"
+                placeholder="Canal"
+                matInput
+              >
+                <mat-option *ngFor="let canal of listas.canales" [value]="canal.value">
+                  {{ canal.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="{{ ViewUserResto }}">
+              <mat-form-field>
+                <input
+                  type="text"
+                  placeholder="Vendedor"
+                  formControlName="vendedor"
+                  name="vendedor"
+                  [matAutocomplete]="auto"
+                  matInput
+                />
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="changeVendedor($event)"
+                  [displayWith]="displayFn"
+                >
+                  <mat-option *ngFor="let option of Vendedores | async" [value]="option">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div class="{{ ViewUserVendedor }}">
+              <mat-form-field>
+                <input
+                  id="idLectura"
+                  placeholder="Vendedor"
+                  matInput
+                  readonly
+                  value="{{ NombreCompleto }}"
+                  formControlName="vendedorS"
+                />
+              </mat-form-field>
+            </div>
+
+            <mat-form-field>
+              <input matInput formControlName="montoCuota" readonly placeholder="Monto de cuota" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div></div>
+
+        <app-financiamiento-cuotas [montoEvaluar]="obtenerTotal()"></app-financiamiento-cuotas>
+
+        <div class="other_buttons" style="padding-top: 45px;">
+          <div class="buttons_">
+            <div>
+              <div class="buttons_actions">
+                <mat-form-field *ngIf="financiamiento.sedeId === 0" id="sede">
+                  <mat-select formControlName="sedeId" placeholder="Sede" matInput>
+                    <mat-option *ngFor="let sede of listas.sedes" [value]="sede.value">
+                      {{ sede.label }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-financiamiento-combos
+          [forma]="forma"
+          (agregarCP)="agregarComboProducto($event)"
+          [aliadoId]="forma.value.aliadoComercialId"
+          [canalId]="forma.value.canalVentaId"
+        ></app-financiamiento-combos>
+
+        <app-financiamiento-productos
+          [forma]="forma"
+          (eliminarCP)="eliminarComboProducto($event)"
+          (despachoCP)="despachoComboProducto($event)"
+          [hayExceso]="hayExceso"
+          [totalMonto]="totalMonto"
+          [detalle]="financiamiento.detalle"
+          [lineaCredito]="lineaCredito"
+        ></app-financiamiento-productos>
+      </section>
+    </mat-card-content>
+  </mat-card>
+  <div class="form_footer">
+    <div class="form_buttons">
+      <div class="buttons_actions">
+        <button
+          *ngIf="ngGuardarFinanciamiento"
+          type="submit"
+          [disabled]="!forma.valid"
+          mat-raised-button
+          color="btnCeleste"
+          (click)="submit()"
+        >
+          <mat-icon>save</mat-icon> Guardar
+        </button>
+        <button (click)="_financiamientoEdicionService.cancelar()" mat-raised-button color="btnGris">
+          <mat-icon>block</mat-icon> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

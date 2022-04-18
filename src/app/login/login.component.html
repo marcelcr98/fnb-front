@@ -1,0 +1,71 @@
+<div id="login">
+  <div class="bg_login">
+    <div class="form_login">
+      <div class="logo">
+        <div class="svg_login"></div>
+      </div>
+      <div class="title">
+        <h2><strong>Sistema FNB</strong></h2>
+      </div>
+      <div class="form_data">
+        <form class="material-form form-validate" [formGroup]="forma">
+          <mat-form-field>
+            <mat-icon matSuffix>person</mat-icon>
+            <input
+              required
+              type="text"
+              id="usuario"
+              name="usuario"
+              matInput
+              formControlName="usuario"
+              placeholder="Usuario"
+            />
+          </mat-form-field>
+
+          <mat-form-field>
+            
+            <mat-icon style="cursor: pointer" matSuffix (click)="togglePasswordVisibility()"> {{showPassword?'visibility':'visibility_off'}}</mat-icon>
+            <input
+              required
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              (keyup)="validerBlank($event.target.value)"
+              name="password"
+              matInput
+              formControlName="password"
+              placeholder="Password"
+            />
+          </mat-form-field>
+          <div id="Sequre" hidden>
+            <div class="canvas_gen">
+              <div>
+                <canvas id="canvasOculto" height="13"></canvas>
+              </div>
+              <mat-icon (click)="generateCode()" matTooltip="Generar nuevo código">refresh</mat-icon>
+            </div>
+            <mat-form-field class="">
+              <input
+                required
+                type="text"
+                id="captcha"
+                name="captcha"
+                maxlength="4"
+                matInput
+                (keyup)="onInput($event.target.value)"
+                formControlName="captcha"
+                placeholder="Ingresa el código"
+              />
+              <mat-error *ngIf="forma.get('captcha').invalid">
+                El captcha no coinciden
+              </mat-error>
+            </mat-form-field>
+            <input hidden type="text" id="valor" formControlName="valor" maxlength="4" />
+          </div>
+          <div class="send">
+            <button type="submit" (click)="ingresar()" id="submit" mat-raised-button color="btnAzul">Ingresar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
